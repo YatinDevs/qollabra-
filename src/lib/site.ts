@@ -1,6 +1,18 @@
-export const siteUrl = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://qollabra.com"
-).replace(/\/$/, "");
+const DEFAULT_SITE_URL = "https://qollabra.com";
+
+/** Tolerates an unset or empty env var and a value typed without a protocol (e.g. "qollabra.com"). */
+function resolveSiteUrl(raw: string | undefined) {
+  const value = raw?.trim();
+  if (!value) return DEFAULT_SITE_URL;
+  const withProtocol = /^https?:\/\//.test(value) ? value : `https://${value}`;
+  try {
+    return new URL(withProtocol).origin;
+  } catch {
+    return DEFAULT_SITE_URL;
+  }
+}
+
+export const siteUrl = resolveSiteUrl(process.env.NEXT_PUBLIC_SITE_URL);
 
 export const site = {
   name: "Qollabra",
