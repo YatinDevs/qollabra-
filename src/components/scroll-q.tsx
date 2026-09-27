@@ -200,8 +200,9 @@ export function ScrollQ() {
 
   if (!enabled) return null;
 
-  // Portalled to <body> so it sits between the page content (z-10) and the footer.
-  // The trail lives in document coordinates (absolute); the Q itself is fixed to the viewport.
+  // Portalled to <body>. The trail sits behind the page content (z-0 < main's z-10); the Q itself
+  // is on top of everything, including the sticky header (z-50). pointer-events-none keeps it
+  // from ever blocking a click. The trail lives in document coordinates; the Q is fixed.
   return createPortal(
     <>
       <motion.svg
@@ -224,7 +225,7 @@ export function ScrollQ() {
       </motion.svg>
       <motion.div
       aria-hidden
-      className="pointer-events-none fixed left-0 top-0 z-0"
+      className="pointer-events-none fixed left-0 top-0 z-[60]"
       style={{ x, y, scale, rotate, opacity, width: BASE_W, height: BASE_H }}
     >
       <QMark
