@@ -1,0 +1,50 @@
+export const metadata = {
+  title: "GenAI in production: the hard part is the work around the model",
+  description:
+    "Why most GenAI projects stall after the demo, and the six things — structure, provenance, review, evaluation, recovery and cost — that make an LLM feature survive real users.",
+  date: "2026-09-27",
+  tags: ["Applied GenAI", "LLM engineering", "Production"],
+  author: "Qollabra Engineering",
+  brand: "qollabra",
+};
+
+A GenAI demo takes an afternoon. A GenAI feature that people depend on takes considerably longer — and almost none of that extra time is spent on the model call.
+
+Models will change. Providers will change. Today's impressive capability becomes tomorrow's commodity. The durable engineering is everything *around* the model: the product design, the domain context, the data, the evaluations, the human controls, the failure handling and the cost management.
+
+Here are the six pieces we see missing most often when a promising prototype refuses to become a product.
+
+## 1. Structure before prose
+
+If an LLM's output is going to change a record, it should arrive as structured data with a schema — not as a paragraph someone parses later. Structured output features help, but a response can be perfectly valid JSON and still be wrong. You need two checks:
+
+- **Schema validity** — are the fields present and correctly typed?
+- **Semantic validity** — do the values make sense together and against what you already know?
+
+Treat missing values, refusals and truncated responses as first-class outcomes, not exceptions.
+
+## 2. Provenance for every value
+
+When a reviewer sees an extracted date, amount or name, they should be one click from the page or passage it came from. Source traceability turns review from "do I trust this?" into "does this match?" — which is faster and far more reliable.
+
+## 3. A suggestion is not a record
+
+The simplest safety rule we apply: **model output is a suggestion until a person or a deterministic rule confirms it.** Keep extracted suggestions separate from validated application data. Never let a later model run silently overwrite a human correction.
+
+## 4. Evaluation you can rerun
+
+"It looked good on the ten documents we tried" is not an evaluation. Build a small, human-reviewed baseline dataset early, record model and prompt versions, and compare configurations against it. Precision and recall per field tell you far more than a general impression.
+
+## 5. Background work, not blocking requests
+
+OCR, extraction and embeddings over long documents do not belong inside an interactive API request. Move them to workers with durable job state, checkpoints and idempotent retries. A failed page should not restart a multi-thousand-page job — and the user should see accurate progress even after a reconnect.
+
+## 6. Cost and latency as product requirements
+
+Every AI step has a price and a delay. Track both per job from day one. Decide where a smaller model, a cache or plain deterministic code is good enough — because it often is.
+
+## The takeaway
+
+None of this is exotic. It is ordinary software engineering applied to a component that is probabilistic. That is exactly why it gets skipped in demos — and exactly why it decides whether the feature survives real users, real workloads and real consequences.
+
+If you have a prototype that works in a demo but not yet in production, a [discovery workshop](/discovery-workshop) is usually the fastest way to find the gap. You can also read how we applied these ideas in a [legal title AI platform](/work/legal-title-ai-platform).

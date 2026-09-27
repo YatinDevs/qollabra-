@@ -1,0 +1,52 @@
+export const metadata = {
+  title: "Workflow or agent? Deciding when an AI system should be allowed to act",
+  description:
+    "A practical way to choose between deterministic software, an LLM workflow and a tool-using agent — and how to constrain an agent's authority when you do need one.",
+  date: "2026-09-20",
+  tags: ["Agentic AI", "Architecture", "AI safety"],
+  author: "Qollabra Engineering",
+  brand: "qollabra",
+};
+
+"Should we build an agent?" is one of the most common questions we hear. The honest answer is often *not yet* — and sometimes *not at all*. Here is the framework we use to decide.
+
+## Three designs, in order of autonomy
+
+1. **Deterministic software.** You define every step and every rule. Cheapest, fastest and easiest to test.
+2. **An LLM workflow.** You still define the steps, but some steps use a model — to extract, classify, summarise or draft. The path is fixed; the model fills in parts of it.
+3. **An agent.** The model chooses its next step and which tools to call, looping until it decides it is done.
+
+Each step up buys flexibility and costs predictability. So the question is not "can an agent do this?" but **"does the extra flexibility improve the outcome enough to justify the extra risk and cost?"**
+
+## Start with a baseline
+
+Before adding autonomy, build the simplest version that could work — often a fixed workflow — and measure it. If an agent cannot beat that baseline on quality, cost or time, you have your answer. If it can, you now know by how much, and you have something to compare regressions against.
+
+## Signals that an agent is justified
+
+- The steps genuinely vary from case to case and cannot be enumerated in advance.
+- Useful work requires gathering context from several sources before deciding what to do.
+- A human currently does exploratory "look here, then there" work that is slow but low-risk.
+
+## Signals that it is not
+
+- The process is well understood and stable — a workflow will be cheaper and easier to trust.
+- Actions are irreversible and there is no natural approval point.
+- You cannot yet measure whether the result is correct.
+
+## If you build one, constrain its authority
+
+An agent should never have more power than the person it is working for. In practice that means:
+
+- **Scoped tools.** Typed inputs, server-side validation and read/write separation. No "run any SQL" tool.
+- **The user's permissions.** The agent acts as the requesting user, scoped to the task — not with a service account that bypasses access control.
+- **Approval for consequential writes.** Show the exact proposed operation, validate it outside the model, and require explicit approval.
+- **Budgets and stop conditions.** Limits on steps, time and cost, and a clear definition of "done" and "give up".
+- **Traces.** Every retrieval, tool call, model version and result recorded, so failures can be investigated.
+- **Escalation.** When evidence is missing or contradictory, the right move is to ask a human — and that should be a designed outcome, not a failure.
+
+## The takeaway
+
+Autonomy is a design decision, not a feature. Earn it with a baseline, bound it with permissions and approvals, and make it observable. Done that way, agents are genuinely useful. Done the other way, they are an expensive way to be surprised.
+
+Read more about how we approach [agentic automation](/services/agentic-automation), or explore the [Agentic AI & Scalable Systems](/qohort/agentic-ai-scalable-systems) tier if you want to learn to build these systems yourself.

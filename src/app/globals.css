@@ -1,0 +1,181 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  /* Qollabra — sampled from the logo: orange #FF9A33, charcoal #444444 */
+  --color-brand: #ff9a33;
+  --color-brand-soft: #fff1e2;
+  --color-brand-ink: #b35c00; /* orange for text on light backgrounds (AA contrast) */
+  --color-ink: #1f1f1f;
+  --color-charcoal: #444444;
+  --color-muted: #5c5c5c;
+  --color-line: #ebe5dc;
+  --color-paper: #fffcf7;
+  --color-sand: #f7f1e8;
+
+  /* Qohort — sampled from the logo: #333333 / #F8F8F8 */
+  --color-q-bg: #1c1c1c;
+  --color-q-panel: #262626;
+  --color-q-line: #3a3a3a;
+  --color-q-text: #f8f8f8;
+  --color-q-muted: #a9a9a9;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-source-serif), ui-serif, Georgia, serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-brand);
+  color: var(--color-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-brand-ink);
+  outline-offset: 2px;
+}
+
+/* Zero-JS mobile menu built on <details> */
+details.menu > summary {
+  list-style: none;
+}
+details.menu > summary::-webkit-details-marker {
+  display: none;
+}
+
+details.faq > summary {
+  list-style: none;
+  cursor: pointer;
+}
+details.faq > summary::-webkit-details-marker {
+  display: none;
+}
+details.faq[open] .faq-icon {
+  transform: rotate(45deg);
+}
+
+/* ---------- Motion primitives (CSS so the hero text paints before JS loads) ---------- */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+/* Transform-only variant for the LCP headline: never hidden, so it counts for LCP immediately. */
+@keyframes rise-soft {
+  from {
+    transform: translateY(10px);
+  }
+}
+.animate-rise {
+  animation: rise 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.animate-rise-soft {
+  animation: rise-soft 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise,
+  .animate-rise-soft {
+    animation: none;
+  }
+}
+
+
+/* Balloon-Q: rises into place once, then drifts gently. */
+@keyframes q-rise {
+  from {
+    transform: translateY(40px) scale(0.96);
+  }
+}
+@keyframes q-float {
+  50% {
+    transform: translateY(-10px);
+  }
+}
+.animate-q-rise {
+  animation: q-rise 1.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.animate-q-float {
+  animation: q-float 7s ease-in-out 1.4s infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-q-rise,
+  .animate-q-float {
+    animation: none;
+  }
+}
+
+/* Hero illustrations */
+@keyframes spoke {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  15%,
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--dx), var(--dy));
+    opacity: 0;
+  }
+}
+@keyframes seat {
+  0%,
+  100% {
+    opacity: 0.18;
+  }
+  20%,
+  60% {
+    opacity: 1;
+  }
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.animate-seat {
+  animation: seat 4.2s ease-in-out infinite;
+}
+.animate-spoke {
+  animation: spoke 2.4s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+.animate-spin-slow {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: spin 40s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-seat {
+    animation: none;
+    opacity: 0.8;
+  }
+  .animate-spoke {
+    animation: none;
+    opacity: 0;
+  }
+  .animate-spin-slow {
+    animation: none;
+  }
+}
+
+/* Stops along the travelling Q's route */
+.q-ring {
+  fill: none;
+  stroke: #ff9a33;
+  stroke-width: 1.25;
+  stroke-dasharray: 4 7;
+  transition: opacity 0.5s ease;
+}

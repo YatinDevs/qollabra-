@@ -1,0 +1,50 @@
+export const metadata = {
+  title: "From academic project to production software: what 'job-ready' actually means",
+  description:
+    "What separates a finished college project from evidence that you can contribute to an engineering team — and a simple scorecard to review your own work.",
+  date: "2026-09-13",
+  tags: ["Careers", "Software engineering", "Students"],
+  author: "Qohort by Qollabra",
+  brand: "qohort",
+};
+
+Many students finish a degree with several completed projects and still struggle to show an interviewer they can contribute to a real engineering team. The gap is rarely effort. It is usually **evidence**.
+
+A project demonstrates that features exist. Job-readiness is shown by how the software behaves when things are not ideal — and by whether *you* can explain and change it.
+
+## What reviewers actually look for
+
+When an engineer reviews your project, they are quietly asking a handful of questions:
+
+- **Correctness.** Does it do the right thing on empty, invalid and unexpected input — not just the happy path?
+- **Permissions.** Can one user see or change another user's data? Is access enforced on the server, or only hidden in the UI?
+- **Data integrity.** Are there constraints and migrations, or can the database drift into a state the code does not expect?
+- **Tests.** Are the important flows covered, so a change can be made with confidence?
+- **Deployment.** Can someone else run it, from a documented setup, without messaging you?
+- **Diagnosis.** When something breaks, is there enough logging to find out why?
+- **Ownership.** Can you explain a design decision, and implement a small change live?
+
+## A scorecard for your own project
+
+Rate each area honestly from 0 to 3:
+
+| Area | 0 | 3 |
+| --- | --- | --- |
+| Correctness | Only the demo path works | Edge cases handled and tested |
+| Access control | None, or UI-only | Server-side, with tests proving denial |
+| Data model | Ad-hoc tables | Constraints and migrations |
+| Tests | None | Key flows covered, run on every change |
+| Deployment | Runs on my laptop | Reproducible setup, deployed, documented |
+| Explanation | "I followed a tutorial" | Can defend trade-offs and alternatives |
+
+Anything at 0 or 1 is where to spend your next two weekends — not on adding another feature.
+
+## What about AI coding assistants?
+
+Use them. Professional engineers do. But the responsibility for correctness does not move to the tool. Reviewers increasingly ask candidates to modify or debug their own code live — which is exactly where copied-but-not-understood work falls apart. Disclose what you used, and make sure you can explain every line you submit.
+
+## The takeaway
+
+One well-engineered, deployed, tested project that you can defend is worth more than five feature-rich demos. Depth is the evidence.
+
+This is the standard the [Qohort Applied AI Engineering Residency](/qohort) is built around — supervised practice, weekly code review and assessed evidence, starting with [Full-stack Software Foundations](/qohort/full-stack-foundations).
