@@ -54,11 +54,26 @@ const proof = [
   { value: "Live", label: "scaled while users kept working" },
 ];
 
-function SectionTitle({ eyebrow, title }: { eyebrow: string; title: string }) {
+/** Where the travelling Q rests below xl: a reserved slot beside the eyebrow, so it never covers text. */
+function MobileStop({ rotate = 0, className = "" }: { rotate?: number; className?: string }) {
+  return (
+    <span
+      aria-hidden
+      data-q-anchor=""
+      data-q-rotate={rotate}
+      className={`block aspect-[107/152] h-11 shrink-0 xl:hidden ${className}`}
+    />
+  );
+}
+
+function SectionTitle({ eyebrow, title, qRotate = 0 }: { eyebrow: string; title: string; qRotate?: number }) {
   return (
     <div>
-      <p className="text-sm font-medium text-brand-ink">{eyebrow}</p>
-      <h2 className="mt-3 font-serif text-4xl tracking-tight sm:text-5xl">{title}</h2>
+      <div className="flex items-end justify-between gap-4">
+        <p className="text-sm font-medium text-brand-ink">{eyebrow}</p>
+        <MobileStop rotate={qRotate} />
+      </div>
+      <h2 className="mt-3 font-serif text-[2.1rem] leading-tight tracking-tight sm:text-5xl">{title}</h2>
     </div>
   );
 }
@@ -71,9 +86,9 @@ export default async function HomePage() {
       <Hero />
 
       {/* Built for */}
-      <Container className="relative mt-8 grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
+      <Container className="relative mt-4 grid items-center gap-10 sm:mt-8 lg:grid-cols-2 lg:gap-20">
         <QWaypoint side="left" size="lg" rotate={-8} className="top-10" />
-        <div className="relative aspect-[4/3] overflow-hidden rounded-3xl">
+        <div className="relative order-2 aspect-[4/3] overflow-hidden rounded-3xl lg:order-none">
           <Image
             src="/images/whiteboard-design.jpg"
             alt="An engineer sketching a system design on a glass whiteboard"
@@ -83,14 +98,14 @@ export default async function HomePage() {
           />
         </div>
         <div>
-          <SectionTitle eyebrow="Where we fit" title="Built for the hard part." />
-          <ul className="mt-10 grid grid-cols-2 gap-x-6 gap-y-6">
+          <SectionTitle eyebrow="Where we fit" title="Built for the hard part." qRotate={-8} />
+          <ul className="mt-8 grid grid-cols-2 gap-x-4 gap-y-5 sm:mt-10 sm:gap-x-6 sm:gap-y-6">
             {builtFor.map(({ icon: Icon, label }) => (
               <li key={label} className="flex items-center gap-3">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand-ink">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand-ink sm:h-10 sm:w-10">
                   <Icon aria-hidden className="h-[18px] w-[18px]" strokeWidth={1.75} />
                 </span>
-                <span className="font-medium">{label}</span>
+                <span className="text-sm font-medium leading-snug sm:text-base">{label}</span>
               </li>
             ))}
           </ul>
@@ -98,16 +113,16 @@ export default async function HomePage() {
       </Container>
 
       {/* What we build */}
-      <Container className="relative mt-32">
+      <Container className="relative mt-20 sm:mt-32">
         <QWaypoint side="right" size="md" rotate={8} />
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <SectionTitle eyebrow="Services" title="What we build." />
+        <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
+          <SectionTitle eyebrow="Services" title="What we build." qRotate={8} />
           <Link href="/services" className="group flex items-center gap-1 text-sm font-medium text-ink">
             All services
             <ArrowRight aria-hidden className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </Link>
         </div>
-        <div className="mt-12 grid grid-cols-2 gap-px overflow-hidden rounded-3xl border border-line bg-line lg:grid-cols-4">
+        <div className="mt-8 grid grid-cols-2 gap-px sm:mt-12 overflow-hidden rounded-3xl border border-line bg-line lg:grid-cols-4">
           {services.map((s) => (
             <Link
               key={s.slug}
@@ -119,7 +134,7 @@ export default async function HomePage() {
               <p className="mt-1 text-xs text-muted sm:text-sm">{s.short}</p>
               <ArrowUpRight
                 aria-hidden
-                className="mt-6 h-4 w-4 text-muted opacity-0 transition-all group-hover:translate-x-0.5 group-hover:opacity-100"
+                className="mt-6 hidden h-4 w-4 text-muted opacity-0 transition-all group-hover:translate-x-0.5 group-hover:opacity-100 sm:block"
               />
             </Link>
           ))}
@@ -127,7 +142,7 @@ export default async function HomePage() {
       </Container>
 
       {/* Case study */}
-      <Container className="relative mt-32">
+      <Container className="relative mt-20 sm:mt-32">
         <QWaypoint side="left" size="md" rotate={-10} className="top-16" />
         <Link
           href="/work/legal-title-ai-platform"
@@ -141,10 +156,13 @@ export default async function HomePage() {
             className="object-cover opacity-45 transition-transform duration-700 group-hover:scale-[1.03]"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/80 to-ink/10" />
-          <div className="relative grid gap-12 p-8 sm:p-14 lg:grid-cols-[1.2fr_1fr] lg:items-end">
+          <div className="relative grid gap-10 p-6 sm:gap-12 sm:p-14 lg:grid-cols-[1.2fr_1fr] lg:items-end">
             <div>
-              <p className="text-sm font-medium text-brand">Case study · Legal AI</p>
-              <h2 className="mt-4 max-w-lg font-serif text-4xl leading-tight tracking-tight sm:text-5xl">
+              <div className="flex items-end justify-between gap-4">
+                <p className="text-sm font-medium text-brand">Case study · Legal AI</p>
+                <MobileStop rotate={-10} />
+              </div>
+              <h2 className="mt-4 max-w-lg font-serif text-[2.1rem] leading-tight tracking-tight sm:text-5xl">
                 Title intelligence for U.S. attorneys.
               </h2>
               <p className="mt-8 inline-flex items-center gap-2 text-sm font-medium">
@@ -152,11 +170,11 @@ export default async function HomePage() {
                 <ArrowRight aria-hidden className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </p>
             </div>
-            <dl className="grid grid-cols-3 gap-6 border-t border-white/15 pt-8 lg:border-0 lg:pt-0">
+            <dl className="grid grid-cols-3 gap-4 border-t border-white/15 pt-6 sm:gap-6 sm:pt-8 lg:border-0 lg:pt-0">
               {proof.map((p) => (
                 <div key={p.label}>
-                  <dt className="font-serif text-3xl text-brand sm:text-4xl">{p.value}</dt>
-                  <dd className="mt-1 text-xs text-white/60">{p.label}</dd>
+                  <dt className="font-serif text-2xl text-brand sm:text-4xl">{p.value}</dt>
+                  <dd className="mt-1 text-[11px] leading-snug text-white/60 sm:text-xs">{p.label}</dd>
                 </div>
               ))}
             </dl>
@@ -165,10 +183,10 @@ export default async function HomePage() {
       </Container>
 
       {/* How we work */}
-      <Container className="relative mt-32">
+      <Container className="relative mt-20 sm:mt-32">
         <QWaypoint side="right" size="sm" rotate={10} />
-        <SectionTitle eyebrow="How we work" title="From idea to production." />
-        <ol className="relative mt-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+        <SectionTitle eyebrow="How we work" title="From idea to production." qRotate={-8} />
+        <ol className="relative mt-10 grid grid-cols-2 gap-x-4 gap-y-8 sm:mt-14 lg:grid-cols-4 lg:gap-6">
           <span
             aria-hidden
             className="absolute left-6 right-6 top-6 hidden border-t border-dashed border-brand/40 lg:block"
@@ -179,7 +197,7 @@ export default async function HomePage() {
                 <Icon aria-hidden className="h-5 w-5" strokeWidth={1.75} />
               </span>
               <p className="mt-5 font-mono text-xs text-muted">0{i + 1}</p>
-              <h3 className="mt-1 text-xl font-medium">{label}</h3>
+              <h3 className="mt-1 text-lg font-medium sm:text-xl">{label}</h3>
               <p className="mt-1 text-sm text-muted">{note}</p>
             </li>
           ))}
@@ -187,12 +205,15 @@ export default async function HomePage() {
       </Container>
 
       {/* Qohort */}
-      <Container className="relative mt-32">
+      <Container className="relative mt-20 sm:mt-32">
         <QWaypoint side="left" size="lg" rotate={-6} className="top-12" />
         <div className="grid overflow-hidden rounded-3xl bg-q-bg text-q-text lg:grid-cols-2">
-          <div className="flex flex-col justify-center p-8 sm:p-14">
-            <Image src="/brand/qohort-paper.png" alt="Qohort" width={216} height={82} className="h-9 w-auto self-start" />
-            <h2 className="mt-8 font-mono text-3xl leading-tight sm:text-4xl">Learn to build it.</h2>
+          <div className="flex flex-col justify-center p-6 sm:p-14">
+            <div className="flex items-start justify-between gap-4">
+              <Image src="/brand/qohort-paper.png" alt="Qohort" width={216} height={82} className="h-9 w-auto" />
+              <MobileStop rotate={-6} />
+            </div>
+            <h2 className="mt-6 font-mono text-[1.75rem] leading-tight sm:mt-8 sm:text-4xl">Learn to build it.</h2>
             <p className="mt-4 font-mono text-sm text-q-muted">
               Applied AI Engineering Residency · 3 tiers · 12 weeks each
             </p>
@@ -208,7 +229,7 @@ export default async function HomePage() {
               </Link>
             </div>
           </div>
-          <div className="relative min-h-72">
+          <div className="relative min-h-56 sm:min-h-72">
             <Image
               src="/images/cohort-learning.jpg"
               alt="Three learners working through code together on one laptop"
@@ -222,21 +243,21 @@ export default async function HomePage() {
 
       {/* Notes */}
       {posts.length > 0 && (
-        <Container className="relative mt-32">
+        <Container className="relative mt-20 sm:mt-32">
           <QWaypoint side="right" size="md" rotate={8} />
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <SectionTitle eyebrow="Insights" title="Engineering notes." />
+          <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
+            <SectionTitle eyebrow="Insights" title="Engineering notes." qRotate={8} />
             <Link href="/blog" className="group flex items-center gap-1 text-sm font-medium text-ink">
               All articles
               <ArrowRight aria-hidden className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
           </div>
-          <ul className="mt-10 border-t border-line">
+          <ul className="mt-6 border-t border-line sm:mt-10">
             {posts.map((p) => (
               <li key={p.slug} className="border-b border-line">
                 <Link
                   href={`/blog/${p.slug}`}
-                  className="group grid gap-2 py-6 sm:grid-cols-[160px_1fr_auto] sm:items-center sm:gap-8"
+                  className="group grid gap-1.5 py-5 sm:grid-cols-[160px_1fr_auto] sm:items-center sm:gap-8 sm:py-6"
                 >
                   <time dateTime={p.meta.date} className="text-sm text-muted">
                     {formatDate(p.meta.date)}
@@ -256,8 +277,16 @@ export default async function HomePage() {
       )}
 
       {/* Closing CTA */}
-      <Container className="mt-32">
+      <Container className="relative mt-20 sm:mt-32">
+        <QWaypoint side="left" size="md" rotate={-8} className="top-12" />
         <div className="relative overflow-hidden rounded-3xl bg-ink text-white">
+          {/* Mobile stop: rests in the photo's corner, clear of the headline and button. */}
+          <span
+            aria-hidden
+            data-q-anchor=""
+            data-q-rotate="-8"
+            className="absolute right-6 top-6 z-10 block aspect-[107/152] h-11 xl:hidden"
+          />
           <Image
             src="/images/balloon-sunrise.jpg"
             alt="A hot-air balloon rising over mountains at sunrise"
@@ -266,8 +295,8 @@ export default async function HomePage() {
             className="object-cover object-[50%_30%]"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/30 to-ink/10" />
-          <div className="relative flex min-h-[420px] flex-col items-center justify-end p-8 text-center sm:p-14">
-            <h2 className="max-w-2xl font-serif text-4xl leading-tight tracking-tight sm:text-6xl">
+          <div className="relative flex min-h-[380px] flex-col items-center justify-end p-6 text-center sm:min-h-[420px] sm:p-14">
+            <h2 className="max-w-2xl font-serif text-[2.4rem] leading-tight tracking-tight sm:text-6xl">
               Ready to lift off?
             </h2>
             <p className="mt-4 text-white/75">Start with a focused discovery workshop.</p>

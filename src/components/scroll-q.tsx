@@ -14,15 +14,11 @@ import { QMark } from "./q-mark";
 /** Size the travelling Q is drawn at; waypoints scale it relative to this (matches the hero Q). */
 const BASE_H = 112;
 const BASE_W = (BASE_H * 107) / 152;
-const QUERY = "(min-width: 1280px)";
 
 type Frame = { s: number; x: number; y: number; scale: number; rotate: number };
 
-function subscribe(cb: () => void) {
-  const mq = window.matchMedia(QUERY);
-  mq.addEventListener("change", cb);
-  return () => mq.removeEventListener("change", cb);
-}
+// Client-only switch: false during SSR/hydration, true once mounted in the browser.
+const noopSubscribe = () => () => {};
 
 /** Piecewise interpolation between waypoints, eased so the Q settles at each stop. */
 function sample(frames: Frame[], s: number, key: "x" | "y" | "scale" | "rotate") {
@@ -37,7 +33,9 @@ function sample(frames: Frame[], s: number, key: "x" | "y" | "scale" | "rotate")
       return a[key] + (b[key] - a[key]) * e;
     }
   }
-  return frames[frames.length - 1][key];
+  // Past the final stop (the footer dock) the Q rides along with the page, staying on the logo.
+  const last = frames[frames.length - 1];
+  return key === "y" ? last.y - (s - last.s) : last[key];
 }
 
 type TrailPoint = { s: number; x: number; y: number };
@@ -63,16 +61,13 @@ function trajectory(frames: Frame[]): TrailPoint[] {
 /**
  * The balloon-Q that travels with the reader: it starts as the hero mark, drifts between
  * [data-q-anchor] waypoints in each section, and docks into the footer logo.
- * Large screens only; hidden entirely for reduced-motion users.
+ * Waypoints are breakpoint-specific (gutter stops on desktop, in-flow stops on mobile); only
+ * visible anchors are used. Hidden entirely for reduced-motion users.
  */
 export function ScrollQ() {
   const reduce = useReducedMotion();
-  const wide = useSyncExternalStore(
-    subscribe,
-    () => window.matchMedia(QUERY).matches,
-    () => false,
-  );
-  const enabled = wide && !reduce;
+  const mounted = useSyncExternalStore(noopSubscribe, () => true, () => false);
+  const enabled = mounted && !reduce;
 
   const frames = useRef<Frame[]>([]);
   const trail = useRef<TrailPoint[]>([]);
@@ -108,7 +103,10 @@ export function ScrollQ() {
           const c = document.createElementNS(SVG_NS, "circle");
           c.setAttribute("cx", String(f.x));
           c.setAttribute("cy", String(f.s + f.y));
-          c.setAttribute("r", String(f.scale * BASE_H * 0.78));
+          // Keep each ring inside the viewport on narrow screens.
+          const vw = root.clientWidth;
+          const r = Math.min(f.scale * BASE_H * 0.78, f.x - 3, vw - f.x - 3);
+          c.setAttribute("r", String(Math.max(r, f.scale * BASE_W * 0.7)));
           c.dataset.s = String(f.s);
           c.setAttribute("class", "q-ring animate-spin-slow");
           return c;
@@ -184,7 +182,13 @@ export function ScrollQ() {
 
     const ro = new ResizeObserver(measure);
     ro.observe(document.body);
-    window.addEventListener("resize", measure);
+    let lastWidth = window.innerWidth;
+    const onResize = () => {
+      if (window.innerWidth === lastWidth) return; // mobile URL bar show/hide — keep the route stable
+      lastWidth = window.innerWidth;
+      measure();
+    };
+    window.addEventListener("resize", onResize);
     document.fonts?.ready.then(measure);
     measure();
 
@@ -192,7 +196,7 @@ export function ScrollQ() {
       unsubscribe();
       window.clearTimeout(timer);
       window.removeEventListener("scroll", show);
-      window.removeEventListener("resize", measure);
+      window.removeEventListener("resize", onResize);
       ro.disconnect();
       root.classList.remove("q-travel");
     };

@@ -14,14 +14,15 @@ const socialLabels: Record<string, string> = {
 export function SiteFooter() {
   const socials = Object.entries(site.social).filter(([, url]) => url);
   return (
-    <footer className="mt-24 border-t border-line bg-sand">
-      <Container className="grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4">
-        <div>
+    <footer className="relative z-10 mt-24 border-t border-line bg-sand">
+      <Container className="grid grid-cols-2 gap-x-6 gap-y-10 py-12 sm:py-14 lg:grid-cols-4">
+        <div className="col-span-2 lg:col-span-1">
           <Link href="/" className="flex items-center gap-3" aria-label="Qollabra home">
             {/* Final stop for the travelling Q on the homepage. */}
             <span className="relative block h-10 w-[28.2px]">
-              <span data-q-anchor="" data-q-rotate="0" className="absolute inset-0" />
-              <QMark gradient className="h-10 w-auto transition-opacity duration-300 xl:[.q-travel_&]:opacity-0" />
+              {/* Desktop dock: the footer fits on screen, so the Q lands on the logo. */}
+              <span data-q-anchor="" data-q-rotate="0" className="absolute inset-0 hidden lg:block" />
+              <QMark gradient className="h-10 w-auto transition-opacity duration-300 lg:[.q-travel_&]:opacity-0" />
             </span>
             <span className="font-serif text-2xl font-semibold tracking-tight text-charcoal">Qollabra</span>
           </Link>
@@ -56,7 +57,14 @@ export function SiteFooter() {
         </FooterCol>
       </Container>
       <Container className="flex flex-col gap-2 border-t border-line py-6 text-xs text-muted sm:flex-row sm:justify-between">
-        <p>© {new Date().getFullYear()} {site.legalName}. All rights reserved.</p>
+        <p className="flex items-center gap-2">
+          {/* Mobile dock: the footer is taller than the screen, so the Q lands down here instead. */}
+          <span className="relative block h-7 w-[19.7px] lg:hidden">
+            <span data-q-anchor="" data-q-rotate="0" className="absolute inset-0" />
+            <QMark gradient className="h-7 w-auto transition-opacity duration-300 [.q-travel_&]:opacity-0" />
+          </span>
+          © {new Date().getFullYear()} {site.legalName}. All rights reserved.
+        </p>
         <p className="flex gap-4">
           <Link href="/privacy" className="hover:text-ink">Privacy</Link>
           <Link href="/terms" className="hover:text-ink">Terms</Link>
